@@ -1,12 +1,20 @@
 // Helper function to set multiple attributes on an HTML element dynamically.
 const images_container = document.querySelector(".images_container");
+
 function setAttributes(element, attributes) {
   for (const key in attributes) {
     element.setAttribute(key, attributes[key]);
   }
 }
 // Dynamically Show Unsplash Photos
-export default async function showPhotos(photos) {
+export default async function showPhotos(
+  photos,
+  imagesLoaded,
+  ready,
+  totalImages
+) {
+  totalImages = photos.length;
+  console.log("all images", totalImages);
   // for each photos
   await photos.forEach((photo) => {
     // Create a link to Unsplash
@@ -23,8 +31,16 @@ export default async function showPhotos(photos) {
       src: photo.links.download,
       alt: photo.alternative_slugs.en,
       title: photo.alt_description,
-      loading: "lazy",
+      // loading: "lazy",
     });
     a.append(img);
+    img.addEventListener("load", () => {
+      imagesLoaded++;
+      console.log("loaded", imagesLoaded);
+      if (imagesLoaded === totalImages) {
+        ready = true;
+        console.log("done loaded");
+      }
+    });
   });
 }
