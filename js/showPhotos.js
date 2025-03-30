@@ -1,22 +1,23 @@
+import infiniteScroll from "../js/infiniteScroll.js";
+import getUnsplashImages from "../js/script.js";
+
 // Helper function to set multiple attributes on an HTML element dynamically.
 const images_container = document.querySelector(".images_container");
-
 function setAttributes(element, attributes) {
   for (const key in attributes) {
     element.setAttribute(key, attributes[key]);
   }
 }
+
 // Dynamically Show Unsplash Photos
-export default async function showPhotos(
-  photos,
-  imagesLoaded,
-  ready,
-  totalImages
-) {
+export default async function showPhotos(photos) {
+  let imagesLoaded = 0;
+  let totalImages = 0;
+  let ready = false;
+
   totalImages = photos.length;
-  console.log("all images", totalImages);
   // for each photos
-  await photos.forEach((photo) => {
+  photos.forEach((photo) => {
     // Create a link to Unsplash
     const a = document.createElement("a");
     // set an href attribute
@@ -28,10 +29,10 @@ export default async function showPhotos(
     // Create an image element
     const img = document.createElement("img");
     setAttributes(img, {
-      src: photo.links.download,
-      alt: photo.alternative_slugs.en,
+      src: photo.urls.regular,
+      alt: photo.alt_description,
       title: photo.alt_description,
-      // loading: "lazy",
+      loading: "lazy",
     });
     a.append(img);
     img.addEventListener("load", () => {
@@ -40,6 +41,7 @@ export default async function showPhotos(
       if (imagesLoaded === totalImages) {
         ready = true;
         console.log("done loaded");
+        infiniteScroll(getUnsplashImages, ready);
       }
     });
   });
